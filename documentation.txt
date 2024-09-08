@@ -1,0 +1,165 @@
+Model Name: RUL Prediction for NASA Turbofan Jet Engine
+
+---
+
+#### Overview
+
+This project focuses on predicting the Remaining Useful Life (RUL) of engines in the NASA Turbofan Jet Engine dataset using a combination of advanced machine learning techniques. The key models employed are XGBoost, which excels at capturing non-linear relationships, and LSTM, which is designed to handle time-series data with long-term dependencies. The project also integrates Meta-Learning (MAML) to ensure that the model can quickly adapt to new, unseen engines with minimal data. Additionally, explainability methods like SHAP have been used to interpret the model's predictions, providing transparency and insight into feature importance.
+
+#### Data Description
+
+The NASA CMAPSS (Commercial Modular Aero-Propulsion System Simulation) dataset includes multivariate time-series data from multiple engines, where sensor measurements are captured at different cycles during each engine's operation. The data consists of:
+
+1. Operational Settings: Represent the specific conditions under which the engine is operating.
+2. Sensor Measurements: 21 sensors measuring various engine parameters such as temperature, pressure, and airflow.
+3. Remaining Useful Life (RUL): Represents the number of cycles left before the engine reaches failure. RUL is not provided directly in the training data but is calculated using the maximum number of cycles an engine experiences before failure.
+
+---
+
+### Model Architecture
+
+#### Data Preprocessing
+
+Noise Handling: The sensor data is noisy due to natural fluctuations during engine operations. Smoothing techniques like rolling averages were applied to reduce the noise while retaining valuable trends in the data.
+
+Scaling: Min-Max Scaling was applied to normalize the operational settings and sensor readings. This step ensures that all features are scaled to the same range (0 to 1), which is crucial for both tree-based models like XGBoost and neural networks like LSTM.
+
+Handling Missing Data: Missing values in the dataset were handled using forward filling and mean imputation techniques, ensuring that no information is lost due to incomplete data.
+
+#### Feature Engineering
+
+Rolling Statistics & Lag Features: Moving averages, rolling standard deviations, and lag features were generated for each sensor reading. These features help capture short-term trends and temporal dependencies in the data, which are vital for predicting RUL.
+
+Dimensionality Reduction using PCA: Principal Component Analysis (PCA) was applied to reduce the dimensionality of the sensor data. The goal of PCA was to capture the most important information from the sensor readings while reducing the noise and complexity of the data. After PCA, 10 principal components were retained.
+
+---
+
+### Model Selection
+
+The two main models chosen for this task were XGBoost and LSTM.
+
+#### XGBoost
+
+Why XGBoost? XGBoost is a powerful gradient boosting algorithm that is highly efficient and can capture complex, non-linear relationships in the data. It is particularly well-suited for structured data and excels in tasks where there are many features, like in this dataset with 21 sensors and multiple operational settings.
+
+XGBoost Model Code:
+```python
+from xgboost import XGBRegressor
+
+# Train XGBoost model
+xgb_model = XGBRegressor()
+xgb_model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = xgb_model.predict(X_val)
+```
+
+#### LSTM (Long Short-Term Memory)
+
+Why LSTM? LSTMs are designed to handle sequential data and can capture long-term dependencies in time-series. In the context of engine degradation, where sensor readings are logged over many cycles, LSTM is capable of learning patterns across time and predicting when an engine will fail.
+
+LSTM Model Code:
+```python
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+
+# Define LSTM model
+lstm_model = Sequential()
+lstm_model.add(LSTM(50, activation='relu', input_shape=(X_train_lstm.shape[1], X_train_lstm.shape[2])))
+lstm_model.add(Dense(1))
+
+# Compile and train the model
+lstm_model.compile(optimizer='adam', loss='mse')
+lstm_model.fit(X_train_lstm, y_train, epochs=50, batch_size=32, validation_data=(X_val_lstm, y_val))
+```
+
+---
+
+### Meta-Learning (MAML)
+
+Incorporating MAML ensures that the model can adapt to new, unseen engines with minimal data. In meta-learning, each engine is treated as a "task" during training, and the model is trained across these tasks to learn a generalizable initialization. This initialization can then be quickly adapted for new engines using only a few gradient updates.
+
+Why MAML? MAML allows the model to quickly adapt to new engines with minimal additional data. This is particularly useful in predictive maintenance scenarios, where new engines may exhibit different degradation behaviors.
+
+How MAML Works in the Model:
+- Meta-Training Phase: The model is trained across multiple engines (tasks) to learn a good initialization that generalizes well.
+- Meta-Testing Phase: The model can be fine-tuned on a small amount of data from a new engine and still produce accurate RUL predictions.
+
+---
+
+### Model Evaluation
+
+Both models were evaluated using Root Mean Squared Error (RMSE) and Mean Absolute Error (MAE), which are common metrics for regression tasks. These metrics provide insights into how well the models can predict the remaining useful life of the engines.
+
+#### XGBoost Results:
+```python
+# XGBoost Metrics
+RMSE: 42.13
+MAE: 32.55
+```
+
+#### LSTM Results:
+```python
+# LSTM Metrics (After 50 Epochs)
+Validation Loss: 2214.84
+Tuned RMSE: 47.06
+Tuned MAE: 36.84
+```
+
+#### Comparison:
+- XGBoost performed slightly better in terms of both RMSE and MAE, indicating that it captured the non-linear relationships in the data more effectively.
+- LSTM, while capable of capturing temporal dependencies, may require more tuning and deeper architectures for better performance in predicting RUL.
+
+---
+
+### Explainability with SHAP
+
+To make the model interpretable, SHAP (SHapley Additive exPlanations) values were used to explain the contributions of individual features to the RUL predictions. SHAP helps in understanding which features (sensors or operational settings) were the most important in driving the model's predictions.
+
+```python
+import shap
+
+# SHAP for XGBoost
+explainer = shap.Explainer(xgb_model)
+shap_values = explainer.shap_values(X_val)
+shap.summary_plot(shap_values, X_val)
+```
+
+---
+
+### Hyperparameter Tuning
+
+To improve model performance, hyperparameter tuning was performed using techniques like GridSearchCV for XGBoost and KerasTuner for LSTM. The tuning process helps find the best combination of parameters to minimize the error on validation data.
+
+#### XGBoost Hyperparameter Tuning Results:
+```python
+Best Parameters: {'colsample_bytree': 0.8, 'learning_rate': 0.1, 'max_depth': 7, 'n_estimators': 300, 'subsample': 1.0}
+Best Negative MSE: -1847.41
+XGBoost Tuned RMSE: 42.13
+XGBoost Tuned MAE: 32.55
+```
+
+#### LSTM Hyperparameter Tuning Results:
+```python
+LSTM Tuned RMSE: 47.06
+LSTM Tuned MAE: 36.84
+```
+
+---
+
+### Conclusion
+
+- XGBoost was the best-performing model in terms of both RMSE and MAE, making it the primary model for RUL prediction in this project.
+- LSTM shows potential for capturing long-term dependencies in time-series data but requires further tuning for optimal performance.
+- MAML was incorporated to ensure adaptability for new engines with minimal additional training, making the model flexible for real-world deployment where engines behave differently.
+- SHAP explainability ensures that the model's predictions are transparent and interpretable, which is crucial for maintenance decisions.
+
+---
+
+### Future Work
+
+- Explore deeper LSTM architectures (e.g., stacking LSTM layers) and additional hyperparameter tuning.
+- Test the model's adaptability to unseen engines using MAML in more real-world scenarios.
+- Extend the SHAP analysis to better understand sensor degradation patterns.
+
+---
