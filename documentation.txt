@@ -4,7 +4,7 @@ Model Name: RUL Prediction for NASA Turbofan Jet Engine
 
 #### Overview
 
-This project focuses on predicting the Remaining Useful Life (RUL) of engines in the NASA Turbofan Jet Engine dataset using a combination of advanced machine learning techniques. The key models employed are XGBoost, which excels at capturing non-linear relationships, and LSTM, which is designed to handle time-series data with long-term dependencies. The project also integrates Meta-Learning (MAML) to ensure that the model can quickly adapt to new, unseen engines with minimal data. Additionally, explainability methods like SHAP have been used to interpret the model's predictions, providing transparency and insight into feature importance.
+This project focuses on predicting the Remaining Useful Life (RUL) of engines in the NASA Turbofan Jet Engine dataset using a combination of advanced machine learning techniques. The key models employed are XGBoost, which excels at capturing non-linear relationships, and LSTM, which is designed to handle time-series data with long-term dependencies. Additionally, explainability methods like SHAP have been used to interpret the model's predictions, providing transparency and insight into feature importance.
 
 #### Data Description
 
@@ -74,17 +74,6 @@ lstm_model.fit(X_train_lstm, y_train, epochs=50, batch_size=32, validation_data=
 ```
 
 ---
-
-### Meta-Learning (MAML)
-
-Incorporating MAML ensures that the model can adapt to new, unseen engines with minimal data. In meta-learning, each engine is treated as a "task" during training, and the model is trained across these tasks to learn a generalizable initialization. This initialization can then be quickly adapted for new engines using only a few gradient updates.
-
-Why MAML? MAML allows the model to quickly adapt to new engines with minimal additional data. This is particularly useful in predictive maintenance scenarios, where new engines may exhibit different degradation behaviors.
-
-How MAML Works in the Model:
-- Meta-Training Phase: The model is trained across multiple engines (tasks) to learn a good initialization that generalizes well.
-- Meta-Testing Phase: The model can be fine-tuned on a small amount of data from a new engine and still produce accurate RUL predictions.
-
 ---
 
 ### Model Evaluation
@@ -151,7 +140,6 @@ LSTM Tuned MAE: 36.85
 
 - XGBoost was the best-performing model in terms of both RMSE and MAE, making it the primary model for RUL prediction in this project.
 - LSTM shows potential for capturing long-term dependencies in time-series data but requires further tuning for optimal performance.
-- MAML was incorporated to ensure adaptability for new engines with minimal additional training, making the model flexible for real-world deployment where engines behave differently.
 - SHAP explainability ensures that the model's predictions are transparent and interpretable, which is crucial for maintenance decisions.
 
 ---
