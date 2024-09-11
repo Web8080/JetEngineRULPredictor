@@ -94,16 +94,16 @@ Both models were evaluated using Root Mean Squared Error (RMSE) and Mean Absolut
 #### XGBoost Results:
 ```python
 # XGBoost Metrics
-RMSE: 42.13
-MAE: 32.55
+RMSE: 42.25
+MAE: 32.50
 ```
 
 #### LSTM Results:
 ```python
 # LSTM Metrics (After 50 Epochs)
 Validation Loss: 2214.84
-Tuned RMSE: 47.06
-Tuned MAE: 36.84
+Tuned RMSE: 47.11
+Tuned MAE: 36.85
 ```
 
 #### Comparison:
@@ -135,14 +135,14 @@ To improve model performance, hyperparameter tuning was performed using techniqu
 ```python
 Best Parameters: {'colsample_bytree': 0.8, 'learning_rate': 0.1, 'max_depth': 7, 'n_estimators': 300, 'subsample': 1.0}
 Best Negative MSE: -1847.41
-XGBoost Tuned RMSE: 42.13
-XGBoost Tuned MAE: 32.55
+XGBoost Tuned RMSE: 42.25
+XGBoost Tuned MAE: 32.50
 ```
 
 #### LSTM Hyperparameter Tuning Results:
 ```python
-LSTM Tuned RMSE: 47.06
-LSTM Tuned MAE: 36.84
+LSTM Tuned RMSE: 47.11
+LSTM Tuned MAE: 36.85
 ```
 
 ---
