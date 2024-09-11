@@ -104,5 +104,4 @@ shap.summary_plot(shap_values, scaled_data)
 - Deploy the model on a cloud platform with real-time RUL prediction.
 - Integrate with dashboard visualization for tracking engine health.
 
-## License
-This project is licensed under the MIT License.
+
