@@ -3,7 +3,7 @@ This repository contains the complete code and documentation for predicting the 
 
 ## Overview
 
-This project predicts the Remaining Useful Life (RUL) of engines from the NASA Turbofan Jet Engine dataset. It uses advanced machine learning models such as **XGBoost** and **LSTM** combined with meta-learning techniques (MAML) to enhance adaptability to new engines.
+This project predicts the Remaining Useful Life (RUL) of engines from the NASA Turbofan Jet Engine dataset. It uses advanced machine learning models such as **XGBoost** and **LSTM**  to enhance adaptability to new engines.
 
 The project also leverages feature engineering techniques like **PCA** for dimensionality reduction and **time-series feature extraction** for building robust models. The model is explainable using **SHAP** for understanding the contribution of each feature to the RUL prediction.
 
@@ -28,7 +28,6 @@ Features
 Key models and Techniques 
 - XGBoost: Non-linear regression model for predicting RUL.
 - LSTM: Recurrent neural network to model time-series dependencies.
-- Meta-Learning (MAML): Ensures adaptability for new engines with minimal data.
 - Feature Engineering: Rolling statistics, lag features, and dimensionality reduction (PCA).
 - Model Explainability: SHAP values for feature contribution interpretation.
 
@@ -83,20 +82,26 @@ shap.summary_plot(shap_values, scaled_data)
 │   ├── test_FD001.txt
 │   ├── RUL_FD001.txt
 ├── models
-│   ├── xgboost_rul_model.pkl
+│   ├── xgboost_model.pkl
+    ├── xgboost_model.pickle
 │   ├── scaler.pkl
+    ├── pca.pkl
+    ├── lstm_model.h5
+    ├── lstm_model.pickle.pkl
 │   ├── preprocessing_pipeline.pkl
 ├── notebooks
-│   ├── model_training.ipynb
+│   ├── code.ipynb
 ├── README.md
 └── requirements.txt
 ```
 
 ## Results
 
-- **RMSE**: 44.58
-- **MAE**: 34.20
-- **LSTM Validation Loss**: 2262
+- Best LSTM RMSE: 48.60
+- Best LSTM MAE**: 39.04
+
+-XGBoost Tuned RMSE: 42.25
+-XGBoost Tuned MAE: 32.50
 
 ## Future Work
 
